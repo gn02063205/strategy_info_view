@@ -1,25 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta http-equiv="refresh" content="0; url=report/" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Strategy Report List</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet" />
   </head>
   <body>
-    <table>
-      <tr>
-        <td>
-          <a href="../report/PEG.html">PEG Report</a>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <a href="../report/MTF.html">MTF Report</a>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <a href="../report/GFT.html">GFT Report</a>
-        </td>
-      </tr>
-    </table>
+    <div class="container mt-5">
+      <h1 class="mb-4">策略回測報告清單</h1>
+      <table class="table table-bordered table-hover">
+        <tbody>
+          <tr>
+            <th>Strategy</th>
+            <th>Describe</th>
+          </tr>
+          <tr>
+            <td>
+              <a href="./report/PEG.html" class="btn btn-link">PEG</a>
+            </td>
+            <td>
+              <p>
+                策略基於「本益成長比」，結合了月營收增長和營業利益成長率等多個經濟指標，旨在尋找高成長潛力且估值合理的股票。核心選股條件涵蓋了短期內營收的增長動能，以及營業利益的穩定增長。此外，策略還考慮了市場波動率和其他風險因子，如融資使用率和業外收支占營收的比例，以確保選擇的股票具有較低的市場風險和較高的財務穩定性。
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="./report/MTF.html" class="btn btn-link">MTF</a>
+            </td>
+            <td>
+              <p>動能策略，押寶股價領先營收突破，大多頭會打出兇悍的一波流，勝率一半一半，但勝手常持有後一去不回，回檔小。因此停損設8%，偏低位置，保留多數獲利部位與下檔波動，遇到中期回檔也砍得快。</p>
+              <b>*留意此策略波動較高。</b>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="./report/GFT.html" class="btn btn-link">GFT</a>
+            </td>
+            <td>
+              <p>這個價值型策略針對小市值股票，使用自由現金流、負債比率、市值營收比、本益比和營業利益成長率來評估公司的營運狀況和獲利能力。</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>*報告在交易日當天21:30左右更新</p>
+      <div class="alert alert-info mt-4" role="alert">
+        本網站回測報告內容由 <a href="https://ai.finlab.tw/" class="alert-link" target="_blank">FinLab©</a> 程式碼提供。
+    </div>
+      
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>
