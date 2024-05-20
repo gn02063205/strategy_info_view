@@ -49,10 +49,41 @@
       </table>
       <p>*報告在交易日當天21:30左右更新</p>
       <div class="alert alert-info mt-4" role="alert">
-        本網站回測報告內容由 <a href="https://ai.finlab.tw/" class="alert-link" target="_blank">FinLab©</a> 程式碼提供。
-    </div>
-      
-    </div>
+        本網站內的回測報告內容由 <a href="https://ai.finlab.tw/" class="alert-link" target="_blank">FinLab©</a> 程式碼提供，請勿外傳或用於商業用途。
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">!注意事項</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <ul>
+                    <li>本網頁是我<b>Andy Lien</b>個人提供給各位好友參考，未經同意請勿外傳，策略越多人使用其效果會越差。</li>
+                    <li>本網站回測報告內容由FinLab提供。不得用於商業用途。</li>
+                    <li>本網站回測報告僅供參考，不構成任何投資建議。</li>
+                    <li>關於量化交易有興趣想要深入者，可參考Finlab官網<a href="https://ai.finlab.tw/" target="_blank">https://ai.finlab.tw/</a></li>
+                  </ul>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" id="agreeButton">同意</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        
+          <script>
+            const modal = new bootstrap.Modal('#exampleModal');
+        
+            modal.show();
+        
+            const agreeButton = document.getElementById('agreeButton');
+            agreeButton.addEventListener('click', () => {
+              modal.hide();
+            });
+          </script>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
