@@ -8,6 +8,23 @@
     <link
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet" />
+    <!-- BlockUI CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.css" rel="stylesheet">
+    <style>
+      .blockUI.blockOverlay {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+      }
+      .blockUI.blockMsg {
+        background-color: white;
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      }
+      .blockUI.blockMsg p {
+        margin: 0;
+        color: #333;
+      }
+    </style>
   </head>
   <body>
     <div class="container mt-5">
@@ -20,7 +37,7 @@
           </tr>
           <tr>
             <td>
-              <a href="./report/PEG.html" class="btn btn-link">PEG</a>
+              <a href="https://python-trade-web-service.onrender.com/strategy/report/PEG" class="btn btn-link">PEG</a>
             </td>
             <td>
               <p>
@@ -30,16 +47,7 @@
           </tr>
           <tr>
             <td>
-              <a href="./report/MTF.html" class="btn btn-link">MTF</a>
-            </td>
-            <td>
-              <p>動能策略，押寶股價領先營收突破，大多頭會打出兇悍的一波流，勝率一半一半，但勝手常持有後一去不回，回檔小。因此停損設8%，偏低位置，保留多數獲利部位與下檔波動，遇到中期回檔也砍得快。</p>
-              <b>*留意此策略波動較高。</b>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <a href="./report/GFT.html" class="btn btn-link">GFT</a>
+              <a href="https://python-trade-web-service.onrender.com/strategy/report/GFT" class="btn btn-link">GFT</a>
             </td>
             <td>
               <p>這個價值型策略針使用自由現金流、負債比率、市值營收比、本益比和營業利益成長率來評估公司的營運狀況和獲利能力。意在尋找財務安全，有成長潛力的優質股。</p>
@@ -47,7 +55,7 @@
           </tr>
           <tr>
             <td>
-              <a href="./report/TOR.html" class="btn btn-link">TOR</a>
+              <a href="https://python-trade-web-service.onrender.com/strategy/report/TOR" class="btn btn-link">TOR</a>
             </td>
             <td>
               <p>這個策略旨在識別具有高殖利率且保持成長動能的冷門中小型股票。這個策略綜合考量了多種市場因子，包括基本面指標、技術面分析以及董監高管的持股比例，以確保所選股票不僅當下吸引，未來也充滿潛力。</p>
@@ -55,18 +63,10 @@
           </tr>
           <tr>
             <td>
-              <a href="./report/INV.html" class="btn btn-link">INV</a> 
+              <a href="https://python-trade-web-service.onrender.com/strategy/report/INV" class="btn btn-link">INV</a> 
             </td>
             <td>
               <p>鎖定專注研發的 top 科技公司，並操作股價創新高的強勢股，做短線操作。基本面條件：當期研發費用率排名前 20%，營收連 2 月年增。技術面條件：股價創 10 日新高 & 股價多頭排列 & 股價小於 200 & 近 3 日均量大於 200 張。每兩週換股，自訂賣出條件為股價連2日落於月線下。</p>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <a href="./report/MIX.html" class="btn btn-link">*MIX</a>
-            </td>
-            <td>
-              <p>這個策略是混和了上述的幾種策略，實際使用了哪些策略，請參考報告內容的選股分頁。</p>
             </td>
           </tr>
         </tbody>
@@ -110,8 +110,35 @@
             });
           </script>
     <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        // 為所有策略連結添加點擊事件
+        $('.btn-link').on('click', function(e) {
+          e.preventDefault();
+          const href = $(this).attr('href');
+          
+          // 顯示 BlockUI
+          $.blockUI({
+            message: '<p>正在載入報告，請稍候...</p>',
+            css: {
+              border: 'none',
+              padding: '15px',
+              backgroundColor: '#fff',
+              '-webkit-border-radius': '10px',
+              '-moz-border-radius': '10px'
+            }
+          });
+
+          // 延遲 500ms 後導向目標頁面
+          setTimeout(function() {
+            window.location.href = href;
+          }, 500);
+        });
+      });
+    </script>
   </body>
 </html>
