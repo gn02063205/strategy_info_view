@@ -115,6 +115,16 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
       $(document).ready(function() {
+        // 先確保頁面載入時清除任何可能的 BlockUI
+        $.unblockUI();
+        
+        // 設定 sessionStorage 以檢查是否是返回操作
+        if (performance.navigation.type === 2 || sessionStorage.getItem('returning') === 'true') {
+          // 如果是從歷史記錄返回的，清除標記並確保解除 BlockUI
+          sessionStorage.removeItem('returning');
+          $.unblockUI();
+        }
+
         // 為所有策略連結添加點擊事件
         $('.btn-link').on('click', function(e) {
           e.preventDefault();
@@ -132,10 +142,26 @@
             }
           });
 
-          // 延遲 500ms 後導向目標頁面
+          // 設定標記，表示下次回到此頁是通過返回操作
+          sessionStorage.setItem('returning', 'true');
+
+          // 延遲 800ms 後導向目標頁面
           setTimeout(function() {
             window.location.href = href;
-          }, 500);
+          }, 800);
+        });
+
+        // 頁面離開前取消 BlockUI
+        // $(window).on('beforeunload', function() {
+        //   $.unblockUI();
+        // });
+        
+        // 頁面獲得焦點時檢查是否解除 BlockUI
+        $(window).on('focus', function() {
+          if (sessionStorage.getItem('returning') === 'true') {
+            $.unblockUI();
+            sessionStorage.removeItem('returning');
+          }
         });
       });
     </script>
