@@ -91,7 +91,7 @@
         </tbody>
       </table>
       <!-- 新增策略組合區塊 -->
-      <div class="card mt-4">
+      <div class="card mt-4" style="display: none;">
         <div class="card-header">
           <h5 class="mb-0">策略組合</h5>
         </div>
@@ -139,6 +139,17 @@
                 <a href="#" id="combinedLink" class="btn btn-success btn-sm strategy-link">
                   <i class="fas fa-external-link-alt mr-1"></i>查看組合報告
                 </a>
+              </div>
+            </div>
+          </div>
+          <!-- 新增等待提示 -->
+          <div id="waitingMessage" class="mt-3" style="display: none;">
+            <div class="alert alert-info">
+              <div class="d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm mr-2" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <span>正在產生組合策略報告，請稍候...</span>
               </div>
             </div>
           </div>
@@ -237,7 +248,7 @@
           }
         });
 
-        // 新增策略組合相關功能
+        // 新增策略組合相關功能 localhost:8000
         const baseUrl = 'https://python-trade-web-service.onrender.com/strategy/report/combined';
         const checkboxes = $('.strategy-checkbox');
         const generateBtn = $('#generateReportBtn');
@@ -250,40 +261,139 @@
           generateBtn.prop('disabled', checkedStrategies.length < 2);
         });
         
-        // 生成報告按鈕點擊事件
+        // 修改準備報告的函數
+        function prepareReport(strategyParam) {
+          // 直接使用網址跳轉方式
+          const prepareUrl = `https://python-trade-web-service.onrender.com/strategy/report/combined/prepare/${strategyParam}`;
+          window.location.href = prepareUrl;
+          return new Promise((resolve) => {
+            // 模擬 AJAX 的 Promise 行為
+            setTimeout(resolve, 1000);
+          });
+        }
+
+        // 修改檢查報告狀態的函數
+        function checkReportStatus(strategyParam) {
+          const checkUrl = `https://python-trade-web-service.onrender.com/strategy/report/combined/check/${strategyParam}`;  // 加入 strategyParam
+          
+          return $.ajax({
+            url: checkUrl,
+            method: 'GET',
+            timeout: 5000 // 設定 timeout 為 5 秒
+          });
+        }
+
+        // 新增輪詢函數
+        function pollReportStatus(strategyParam, maxAttempts = 30) {
+          let attempts = 0;
+          const pollInterval = 3000; // 每 3 秒檢查一次
+          
+          function poll() {
+            checkReportStatus(strategyParam)
+              .done(function(response) {
+                // 如果回應是 200，顯示連結
+                const fullUrl = `${baseUrl}/${strategyParam}`;
+                $('#selectedStrategies').text(strategyParam.split(',').join(' + '));
+                combinedLink.attr('href', fullUrl);
+                $('#waitingMessage').hide();
+                combinedStrategyLink.show();
+                
+                // 為組合連結添加 BlockUI 效果
+                combinedLink.off('click').on('click', function(e) {
+                  e.preventDefault();
+                  const href = $(this).attr('href');
+                  
+                  $.blockUI({
+                    message: '<p>正在載入報告，請稍候...</p>',
+                    css: {
+                      border: 'none',
+                      padding: '15px',
+                      backgroundColor: '#fff',
+                      '-webkit-border-radius': '10px',
+                      '-moz-border-radius': '10px'
+                    }
+                  });
+                  
+                  sessionStorage.setItem('returning', 'true');
+                  
+                  setTimeout(function() {
+                    window.location.href = href;
+                  }, 800);
+                });
+              })
+              .fail(function(jqXHR) {
+                attempts++;
+                if (attempts < maxAttempts) {
+                  // 如果還沒超過最大嘗試次數，繼續輪詢
+                  setTimeout(poll, pollInterval);
+                } else {
+                  // 超過最大嘗試次數，顯示錯誤訊息
+                  $('#waitingMessage').hide();
+                  combinedStrategyLink.hide();
+                  
+                  // 顯示錯誤提示
+                  const errorHtml = `
+                    <div class="alert alert-danger mt-3">
+                      <p class="mb-0">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        報告產生失敗，請稍後再試
+                      </p>
+                    </div>
+                  `;
+                  $('#waitingMessage').after(errorHtml);
+                  
+                  // 5秒後自動移除錯誤提示
+                  setTimeout(function() {
+                    $('.alert-danger').fadeOut(function() {
+                      $(this).remove();
+                    });
+                  }, 5000);
+                }
+              });
+          }
+
+          // 開始輪詢
+          poll();
+        }
+
+        // 修改生成報告按鈕點擊事件
         generateBtn.on('click', function() {
           const checkedStrategies = getCheckedStrategies();
           if (checkedStrategies.length >= 2) {
             const strategyParam = checkedStrategies.join(',');
-            const fullUrl = `${baseUrl}/${strategyParam}`;
+            // 移除可能存在的錯誤提示
+            $('.alert-danger').remove();
             
-            // 更新顯示方式
-            $('#selectedStrategies').text(checkedStrategies.join(' + '));
-            combinedLink.attr('href', fullUrl);
-            combinedStrategyLink.show();
+            // 顯示等待提示
+            $('#waitingMessage').show();
+            combinedStrategyLink.hide();
             
-            // 為組合連結添加 BlockUI 效果
-            combinedLink.off('click').on('click', function(e) {
-              e.preventDefault();
-              const href = $(this).attr('href');
-              
-              $.blockUI({
-                message: '<p>正在載入組合報告，請稍候...</p>',
-                css: {
-                  border: 'none',
-                  padding: '15px',
-                  backgroundColor: '#fff',
-                  '-webkit-border-radius': '10px',
-                  '-moz-border-radius': '10px'
-                }
+            // 先呼叫 prepare API
+            prepareReport(strategyParam)
+              .then(function() {
+                // prepare 成功後開始輪詢檢查狀態
+                pollReportStatus(strategyParam);
+              })
+              .catch(function(error) {
+                // prepare 失敗時顯示錯誤訊息
+                $('#waitingMessage').hide();
+                const errorHtml = `
+                  <div class="alert alert-danger mt-3">
+                    <p class="mb-0">
+                      <i class="fas fa-exclamation-circle mr-2"></i>
+                      報告準備失敗，請稍後再試
+                    </p>
+                  </div>
+                `;
+                $('#waitingMessage').after(errorHtml);
+                
+                // 5秒後自動移除錯誤提示
+                setTimeout(function() {
+                  $('.alert-danger').fadeOut(function() {
+                    $(this).remove();
+                  });
+                }, 5000);
               });
-              
-              sessionStorage.setItem('returning', 'true');
-              
-              setTimeout(function() {
-                window.location.href = href;
-              }, 800);
-            });
           }
         });
         
