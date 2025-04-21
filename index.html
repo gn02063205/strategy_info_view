@@ -266,9 +266,7 @@
           const checkedStrategies = getCheckedStrategies();
           if (checkedStrategies.length >= 2) {
             const strategyParam = checkedStrategies.join(',');
-            
             const prepareUrl = 'https://python-trade-web-service.onrender.com/strategy/report/combined/prepare';
-            //const prepareUrl = 'http://localhost:8000/strategy/report/combined/prepare';
             const reportUrl = `${baseUrl}/${strategyParam}`;
             
             // 顯示準備中訊息
@@ -277,16 +275,23 @@
             generateBtn.prop('disabled', true);
             
             try {
+              // 使用 AbortController 設定較長的 timeout
+              const controller = new AbortController();
+              const timeout = setTimeout(() => controller.abort(), 300000); // 設定 5 分鐘超時
+
               // 呼叫準備 API
               const response = await fetch(prepareUrl, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
-                },  
+                },
                 body: JSON.stringify({
-                  strategy_name: checkedStrategies.join(',')
-                })
+                  strategies: checkedStrategies
+                }),
+                signal: controller.signal
               });
+
+              clearTimeout(timeout); // 清除 timeout
 
               if (response.ok) {
                 // 準備完成，顯示報告連結
@@ -323,7 +328,11 @@
             } catch (error) {
               // 錯誤處理
               $('#preparingMessage').hide();
-              alert('準備報告時發生錯誤，請稍後再試');
+              if (error.name === 'AbortError') {
+                alert('準備報告時間超過限制，請稍後再試');
+              } else {
+                alert('準備報告時發生錯誤，請稍後再試');
+              }
               console.error('Error:', error);
             } finally {
               generateBtn.prop('disabled', false);
